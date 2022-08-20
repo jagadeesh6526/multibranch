@@ -1,0 +1,46 @@
+pipeline
+{
+    agent any
+        stages
+	    {
+	            stage('ContinuesDownload')
+		            {
+			                steps
+					            {
+						                    git 'https://github.com/intelliqittrainings/maven.git'
+								                }
+										        }
+											        stage('ContinuesBuild')
+												        {
+													            steps
+														                {
+																                sh 'mvn package'
+																		            }
+																			            }
+																				            stage('ContinuesDeployment')
+																					            {
+																						                steps
+																								            {
+																									                    deploy adapters: [tomcat9(credentialsId: 'd2e49ea0-a00f-459f-8b56-b7decb7fe915', path: '', url: 'http://172.31.32.153:8080')], contextPath: 'mytestapp', war: '**/*.war'
+																											                }
+																													        }
+																														        stage('ContinuesTesting')
+																															        {
+																																            steps
+																																	                {
+																																			                git 'https://github.com/intelliqittrainings/FunctionalTesting.git'
+																																					                sh 'java -jar /home/ubuntu/.jenkins/workspace/Declarativepipeline/testing.jar'
+																																							            }
+																																								            }
+																																									            stage('ContinuesDelivery')
+																																										            {
+																																											                steps
+																																													            {
+																																														                    deploy adapters: [tomcat9(credentialsId: 'd2e49ea0-a00f-459f-8b56-b7decb7fe915', path: '', url: 'http://172.31.39.46:8080')], contextPath: 'myprodapp', war: '**/*.war'
+																																																                    
+																																																		                }
+																																																				        }   
+																																																					        
+																																																						    }
+																																																						        
+																																																							}    
